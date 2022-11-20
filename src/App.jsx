@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaClipboard } from "react-icons/fa";
 import { useForm } from "./useForm";
+import { getSpecialChar, getRandomChar } from "./utils";
 
 function App() {
   const [values, setValues] = useForm({
@@ -10,13 +11,55 @@ function App() {
     number: false,
     symbol: false,
   });
+  const [result, setResult] = useState("");
+
+  const fieldsArray = [
+    {
+      field: values.capital,
+      getChar: () => getRandomChar(65, 90),
+    },
+    {
+      field: values.small,
+      getChar: () => getRandomChar(97, 122),
+    },
+    {
+      field: values.number,
+      getChar: () => getRandomChar(48, 57),
+    },
+    {
+      field: values.symbol,
+      getChar: () => getSpecialChar(),
+    },
+  ];
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    let generatedPassword = "";
+    const checkedFields = fieldsArray.filter(({ field }) => field);
+    for (let i = 0; i < values.length; i++) {
+      const index = Math.floor(Math.random() * checkedFields.length);
+      const letter = checkedFields[index]?.getChar();
+
+      if (letter) {
+        generatedPassword += letter;
+      }
+    }
+    if (generatedPassword) {
+      setResult(generatedPassword);
+    }
+  };
 
   return (
     <section>
       <div className='container'>
-        <form id='pg-form'>
+        <form id='pg-form' onSubmit={handleOnSubmit}>
           <div className='result'>
-            <input type='text' id='result' placeholder='Min 6 Char' readOnly />
+            <input
+              type='text'
+              id='result'
+              placeholder='Min 6 Char'
+              readOnly
+              value={result}
+            />
             <div className='clipboard'>
               <FaClipboard></FaClipboard>
             </div>

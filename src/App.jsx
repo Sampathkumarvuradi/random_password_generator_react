@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { FaClipboard } from "react-icons/fa";
 import { useForm } from "./useForm";
 import { getSpecialChar, getRandomChar } from "./utils";
@@ -45,6 +46,17 @@ function App() {
     }
     if (generatedPassword) {
       setResult(generatedPassword);
+    } else {
+      toast.error("Please select atleast one field");
+    }
+  };
+
+  const handleClipboard = async () => {
+    if (result) {
+      await navigator.clipboard.writeText(result);
+      toast.success("Copied to your clipboard");
+    } else {
+      toast.error("No password to copy");
     }
   };
 
@@ -60,7 +72,7 @@ function App() {
               readOnly
               value={result}
             />
-            <div className='clipboard'>
+            <div className='clipboard' onClick={handleClipboard}>
               <FaClipboard></FaClipboard>
             </div>
           </div>
